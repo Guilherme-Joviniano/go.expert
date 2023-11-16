@@ -2,14 +2,14 @@ package main
 
 import "fmt"
 
-func main() {
-	guilherme := Client{
-		name:   "Guilherme",
-		active: true,
-	}
+// func main() {
+// 	guilherme := Client{
+// 		name:   "Guilherme",
+// 		active: true,
+// 	}
 
-	Desativar(&guilherme)
-}
+// 	Desativar(&guilherme)
+// }
 
 func Desativar(person Person) {
 	person.Disable()
