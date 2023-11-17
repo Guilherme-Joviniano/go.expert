@@ -7,3 +7,7 @@ type Number interface {
 func Plus[T Number](a, b T) T {
 	return a + b
 }
+
+func Less[T Number] (a,b T) T {
+	return a - b
+}
