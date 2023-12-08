@@ -13,7 +13,14 @@ type Course struct {
 type Courses []Course
 
 func TemplateWithExternalFileExampleOfUsage() {
-	htmlTemplate := template.Must(template.New("template.html").ParseFiles("./templateWithExternalFile/template.html"))
+	templates := []string{
+		"./templateWithExternalFile/header.html",
+		"./templateWithExternalFile/content.html",
+		"./templateWithExternalFile/footer.html",
+	}
+
+	htmlTemplate := template.Must(template.New("content.html").ParseFiles(templates...))
+	
 	err := htmlTemplate.Execute(os.Stdout, Courses{
 		{"Go", 40},
 		{"Java", 100},

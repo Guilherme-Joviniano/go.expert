@@ -43,10 +43,10 @@ func main() {
 			panic(err)
 		}
 	})
-	
-	http.ListenAndServe(":8080", nil)
 
 	BasicExampleOfTemplateUsage()
 	must.MustExampleOfUsage()
 	templateWithExternalFile.TemplateWithExternalFileExampleOfUsage()
+	
+	http.ListenAndServe(":8080", nil)
 }
