@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"net/http"
 	"os"
 
 	"github.com/Guilherme-Joviniano/go-template-examples-and-usages/must"
@@ -12,6 +13,8 @@ type Course struct {
 	Name     string
 	Workload int32
 }
+
+type Courses []Course
 
 func BasicExampleOfTemplateUsage() {
 	course := Course{"Go", 40}
@@ -27,6 +30,22 @@ func BasicExampleOfTemplateUsage() {
 }
 
 func main() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		htmlTemplate := template.Must(template.New("template.html").ParseFiles("./templateWithExternalFile/template.html"))
+		err := htmlTemplate.Execute(w, Courses{
+			{"Go", 40},
+			{"Java", 100},
+			{"Javascript", 60},
+			{"PHP", 80},
+		})
+
+		if err != nil {
+			panic(err)
+		}
+	})
+	
+	http.ListenAndServe(":8080", nil)
+
 	BasicExampleOfTemplateUsage()
 	must.MustExampleOfUsage()
 	templateWithExternalFile.TemplateWithExternalFileExampleOfUsage()
