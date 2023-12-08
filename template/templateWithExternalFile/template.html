@@ -17,7 +17,7 @@
       <tbody>
         {{ range . }} {{ if eq .Workload 40 }}
         <tr>
-          <td>{{ .Name }}</td>
+          <td>{{ .Name | ToUpper }}</td>
           <td>{{ .Workload }}</td>
         </tr>
         {{ end }} {{ end }}

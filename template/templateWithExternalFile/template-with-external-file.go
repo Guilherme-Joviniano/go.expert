@@ -3,6 +3,7 @@ package templateWithExternalFile
 import (
 	"html/template"
 	"os"
+	"strings"
 )
 
 type Course struct {
@@ -12,6 +13,10 @@ type Course struct {
 
 type Courses []Course
 
+func ToUpper(s string) string {
+	return strings.ToUpper(s)
+}
+
 func TemplateWithExternalFileExampleOfUsage() {
 	templates := []string{
 		"./templateWithExternalFile/header.html",
@@ -19,8 +24,8 @@ func TemplateWithExternalFileExampleOfUsage() {
 		"./templateWithExternalFile/footer.html",
 	}
 
-	htmlTemplate := template.Must(template.New("content.html").ParseFiles(templates...))
-	
+	htmlTemplate := template.Must(template.New("content.html").Funcs(template.FuncMap{"ToUpper": ToUpper}).ParseFiles(templates...))
+
 	err := htmlTemplate.Execute(os.Stdout, Courses{
 		{"Go", 40},
 		{"Java", 100},
