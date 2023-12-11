@@ -35,12 +35,37 @@ func main() {
 
 	// db.Create(&products)
 
-	// Select's 
+	// Select's
+	// var product Product
+	// db.First(&product, 1)
+	// log.Println(product)
+
+	// var products []Product
+	// db.Find(&products)
+	// log.Println(products)
+
+	// select with where
+	// var products []Product
+	// db.Limit(2).Offset(2).Find(&products)
+	// log.Println(products)
+
+	// var products []Product
+	// db.Where("price > ?", 100).Find(&products)
+	// log.Println(products)
+
+	// db.Where("id = ?", 1).Find(&products)
+	// log.Println(products)
+
+	// Edit and Delete
+
 	var product Product
 	db.First(&product, 1)
-	log.Println(product)
+	product.Name = "New mouse"
+	db.Save(&product)
 
-	var products []Product
-	db.Find(&products)
-	log.Println(products)
+	var product2 Product
+	db.First(&product2, 1)
+	log.Println(product2)
+
+	db.Delete(&product2)
 }
