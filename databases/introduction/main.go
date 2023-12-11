@@ -54,6 +54,16 @@ func main() {
 	}
 
 	log.Println(result)
+
+	products, err := listAllProducts(db)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, product := range products {
+		log.Println(product)
+	}
 }
 
 func insertProduct(db *sql.DB, product *Product) error {
@@ -100,4 +110,36 @@ func getProduct(ctx context.Context, db *sql.DB, id string) (*Product, error) {
 	}
 
 	return &product, err
+}
+
+func listAllProducts(db *sql.DB) ([]*Product, error) {
+	statement, err := db.Prepare("SELECT * FROM tb_products")
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer statement.Close()
+
+	var products []*Product
+
+	rows, err := statement.Query()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var product Product
+
+		err = rows.Scan(&product.ID, &product.Name, &product.Price)
+
+		if err != nil {
+			return nil, err
+		}
+
+		products = append(products, &product)
+	}
+
+	return products, nil
 }
