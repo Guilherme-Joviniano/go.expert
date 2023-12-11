@@ -11,6 +11,7 @@ type Product struct {
 	ID    int `gorm:"primaryKey;auto_increment"`
 	Name  string
 	Price float32
+	gorm.Model
 }
 
 func main() {
@@ -58,14 +59,20 @@ func main() {
 
 	// Edit and Delete
 
-	var product Product
-	db.First(&product, 1)
-	product.Name = "New mouse"
-	db.Save(&product)
+	// var product Product
+	// db.First(&product, 1)
+	// product.Name = "New mouse"
+	// db.Save(&product)
 
-	var product2 Product
-	db.First(&product2, 1)
-	log.Println(product2)
+	// var product2 Product
+	// db.First(&product2, 1)
+	// log.Println(product2)
 
-	db.Delete(&product2)
+	// db.Delete(&product2)
+
+	// Soft Delete
+	db.Create(&Product{
+		Name:  "Monitor AOC Hero",
+		Price: float32(1000),
+	}) 
 }
