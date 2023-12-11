@@ -64,6 +64,12 @@ func main() {
 	for _, product := range products {
 		log.Println(product)
 	}
+
+	err = deleteProduct(db, product.ID)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func insertProduct(db *sql.DB, product *Product) error {
@@ -142,4 +148,18 @@ func listAllProducts(db *sql.DB) ([]*Product, error) {
 	}
 
 	return products, nil
+}
+
+func deleteProduct(db *sql.DB, id string) error {
+	statement, err := db.Prepare("DELETE FROM tb_products WHERE id = ?")
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	_, err = statement.Exec(id)
+
+	return err
 }
