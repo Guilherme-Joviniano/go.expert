@@ -25,16 +25,22 @@ func main() {
 
 	db.AutoMigrate(&Product{})
 
-	db.Create(&Product{Name: "Monitor AOC HERO", Price: float32(999.90)})
+	// db.Create(&Product{Name: "Monitor AOC HERO", Price: float32(999.90)})
 
-	products := []Product{
-		{Name: "Monitor AOC Hero", Price: float32(999.90)},
-		{Name: "SpongeBob Toy", Price: float32(49.90)},
-		{Name: "Mouse Gamer Hero", Price: float32(129.99)},
-	}
+	// products := []Product{
+	// 	{Name: "Monitor AOC Hero", Price: float32(999.90)},
+	// 	{Name: "SpongeBob Toy", Price: float32(49.90)},
+	// 	{Name: "Mouse Gamer Hero", Price: float32(129.99)},
+	// }
 
-	db.Create(&products)
+	// db.Create(&products)
 
+	// Select's 
+	var product Product
+	db.First(&product, 1)
+	log.Println(product)
 
-	
+	var products []Product
+	db.Find(&products)
+	log.Println(products)
 }
