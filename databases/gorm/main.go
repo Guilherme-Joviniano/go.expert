@@ -71,8 +71,12 @@ func main() {
 	// db.Delete(&product2)
 
 	// Soft Delete
-	db.Create(&Product{
+	product := Product{
 		Name:  "Monitor AOC Hero",
 		Price: float32(1000),
-	}) 
+	}
+
+	db.Create(&product)
+
+	db.Delete(&product)
 }
