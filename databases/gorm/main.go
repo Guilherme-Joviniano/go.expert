@@ -191,5 +191,18 @@ func main() {
 	//}
 
 	// LOCKS
-
+	//var category Category
+	//
+	//transaction := db.Begin()
+	//
+	//err = transaction.Clauses(clause.Locking{Strength: "UPDATE"}).First(&category, 1).Error
+	//
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//category.Name = "Eletronicos"
+	//
+	//transaction.Debug().Save(&category)
+	//transaction.Commit()
 }
