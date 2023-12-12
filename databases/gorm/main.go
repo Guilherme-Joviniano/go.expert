@@ -1,17 +1,33 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
+type Category struct {
+	ID       int `gorm:"primaryKey"`
+	Name     string
+	Products []Product
+}
+
 type Product struct {
-	ID    int `gorm:"primaryKey;auto_increment"`
-	Name  string
-	Price float32
+	ID           int `gorm:"primaryKey"`
+	Name         string
+	Price        float32
+	CategoryID   int
+	Category     Category
+	SerialNumber SerialNumber
 	gorm.Model
+}
+
+type SerialNumber struct {
+	ID        int `gorm:"primaryKey"`
+	Number    string
+	ProductId int
 }
 
 func main() {
@@ -24,7 +40,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&Product{})
+	db.AutoMigrate(&Product{}, &Category{}, &SerialNumber{})
 
 	// db.Create(&Product{Name: "Monitor AOC HERO", Price: float32(999.90)})
 
@@ -71,12 +87,72 @@ func main() {
 	// db.Delete(&product2)
 
 	// Soft Delete
-	product := Product{
-		Name:  "Monitor AOC Hero",
-		Price: float32(1000),
+	// product := Product{
+	// 	Name:  "Monitor AOC Hero",
+	// 	Price: float32(1000),
+
+	// }
+	// db.Create(&product)
+	// db.Delete(&product)
+
+	// Belongs To
+
+	//category := Category{
+	//	Name: "Eletronics",
+	//}
+	//
+	//db.Create(&category)
+	//
+	//db.Create(&Product{
+	//	Name:       "Macbook M1 Air 2020",
+	//	Price:      float32(10000),
+	//	CategoryID: category.ID,
+	//})
+	//
+	//var products []Product
+	//db.Find(&products)
+	//
+	// for _, product := range products {
+	//	log.Println(product)
+	//}
+
+	//  Has one
+
+	//category := Category{
+	//	Name: "Eletronics",
+	//}
+	//
+	//db.Create(&category)
+	//
+	//db.Create(&Product{
+	//	Name:       "Macbook M1 Air 2020",
+	//	Price:      float32(10000),
+	//	CategoryID: category.ID,
+	//})
+	//
+	//db.Create(&SerialNumber{
+	//	Number:    "a9080938210931283",
+	//	ProductId: 1,
+	//})
+	//
+	//var products []Product
+	//
+	//db.Preload("Category").Preload("SerialNumber").Find(&products)
+	//
+	//for _, product := range products {
+	//	fmt.Println(product.Name, product.Category.Name, product.SerialNumber.Number)
+	//}
+
+	// has many
+	var categories []Category
+	err = db.Model(&Category{}).Preload("Products").Find(&categories).Error
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	db.Create(&product)
-
-	db.Delete(&product)
+	for _, category := range categories {
+		fmt.Println(category.Name)
+		for _, product := range category.Products {
+			fmt.Println("- ", product.Name)
+		}
+	}
 }
