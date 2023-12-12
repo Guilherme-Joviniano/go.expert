@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -11,15 +10,14 @@ import (
 type Category struct {
 	ID       int `gorm:"primaryKey"`
 	Name     string
-	Products []Product
+	Products []Product `gorm:"many2many:products_categories;"`
 }
 
 type Product struct {
 	ID           int `gorm:"primaryKey"`
 	Name         string
 	Price        float32
-	CategoryID   int
-	Category     Category
+	Categories   []Category `gorm:"many2many:products_categories;"`
 	SerialNumber SerialNumber
 	gorm.Model
 }
@@ -40,7 +38,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&Product{}, &Category{}, &SerialNumber{})
+	err = db.AutoMigrate(&Product{}, &Category{}, &SerialNumber{})
+
+	if err != nil {
+		panic(err)
+	}
 
 	// db.Create(&Product{Name: "Monitor AOC HERO", Price: float32(999.90)})
 
@@ -144,15 +146,50 @@ func main() {
 	//}
 
 	// has many
-	var categories []Category
-	err = db.Model(&Category{}).Preload("Products").Find(&categories).Error
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, category := range categories {
-		fmt.Println(category.Name)
-		for _, product := range category.Products {
-			fmt.Println("- ", product.Name)
-		}
-	}
+	//var categories []Category
+	//err = db.Model(&Category{}).Preload("Products").Find(&categories).Error
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//for _, category := range categories {
+	//	fmt.Println(category.Name)
+	//	for _, product := range category.Products {
+	//		fmt.Println("- ", product.Name)
+	//	}
+	//}
+
+	// many to many
+
+	//category := Category{Name: "kitchen"}
+	//category2 := Category{Name: "eletronic"}
+	//
+	//db.Create(&category)
+	//
+	//db.Create(&Product{
+	//	Name:  "Fogão",
+	//	Price: float32(3200.99),
+	//	SerialNumber: SerialNumber{
+	//		Number: "123",
+	//	},
+	//	Categories: []Category{
+	//		category,
+	//		category2,
+	//	},
+	//})
+	//
+	//var categories []Category
+	//
+	//err = db.Model(&Category{}).Preload("Products").Find(&categories).Error
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//for _, category := range categories {
+	//	fmt.Println(category.Name)
+	//	for _, product := range category.Products {
+	//		fmt.Println("- ", product.Name)
+	//	}
+	//}
+
+	// LOCKS
+
 }
