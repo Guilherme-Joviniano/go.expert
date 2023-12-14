@@ -166,10 +166,10 @@ func main() {
 	//db.Create(&category)
 	//
 	//db.Create(&Product{
-	//	Name:  "Fogão",
+	//	Name:  "Fogão",	
 	//	Price: float32(3200.99),
 	//	SerialNumber: SerialNumber{
-	//		Number: "123",
+	//		umber: "123",N
 	//	},
 	//	Categories: []Category{
 	//		category,
