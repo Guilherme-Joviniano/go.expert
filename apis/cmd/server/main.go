@@ -8,6 +8,7 @@ import (
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/entity"
 	database "github.com/Guilherme-Joviniano/go.expert/apis/internal/infra/database/sqlite"
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/infra/webserver/handlers"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth"
 	"gorm.io/driver/sqlite"
@@ -39,8 +40,9 @@ func main() {
 
 	router := chi.NewRouter()
 
-	// router.Use(middleware.Logger)
-	router.Use(LoggerRequest)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	// router.Use(LoggerRequest)
 
 	router.Route("/products",
 		func(router chi.Router) {
