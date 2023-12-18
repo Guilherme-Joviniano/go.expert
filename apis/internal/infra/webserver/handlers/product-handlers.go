@@ -7,7 +7,7 @@ import (
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/dto"
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/entity"
 	database "github.com/Guilherme-Joviniano/go.expert/apis/internal/infra/database/schemas"
-	entityPKG "github.com/Guilherme-Joviniano/go.expert/apis/pkg/entity"
+	public_entity "github.com/Guilherme-Joviniano/go.expert/apis/pkg/entity"
 	"github.com/Guilherme-Joviniano/go.expert/apis/pkg/util"
 	"github.com/go-chi/chi/v5"
 )
@@ -78,7 +78,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, req *http.Request)
 
 	var product entity.Product
 
-	productId, err := entityPKG.ParseID(id)
+	productId, err := public_entity.ParseID(id)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -114,7 +114,7 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	_, err := entityPKG.ParseID(id)
+	_, err := public_entity.ParseID(id)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
