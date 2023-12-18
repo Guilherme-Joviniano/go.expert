@@ -33,13 +33,22 @@ func main() {
 	productService := database.NewProductRepository(db)
 	productHandler := handlers.NewProductHandler(productService)
 
+	userService :=	database.NewUserRepository(db)
+	userHandler := handlers.NewUserHandler(userService)
+
+
+
 	router := chi.NewRouter()
+
 	router.Use(middleware.Logger)
+	
 	router.Post("/products", productHandler.CreateProduct)
 	router.Get("/products/{id}", productHandler.GetProduct)
 	router.Get("/products", productHandler.ListProducts)
 	router.Put("/products/{id}", productHandler.UpdateProduct)
 	router.Delete("/products/{id}", productHandler.DeleteProduct)
+
+	router.Post("/users", userHandler.CreateUser)
 
 	http.ListenAndServe(":8000", router)
 }
