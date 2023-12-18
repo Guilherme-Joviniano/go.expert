@@ -6,13 +6,13 @@ import (
 )
 
 func RequestToTypeAdapter[T interface{}](request io.Reader) (*T, error) {
-	_type := new(T)
+	bind := new(T)
 
-	err := json.NewDecoder(request).Decode(&_type)
+	err := json.NewDecoder(request).Decode(&bind)
 
 	if err != nil {
-		return _type, err
+		return nil, err
 	}
 
-	return _type, nil
+	return bind, nil
 }
