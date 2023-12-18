@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/dto"
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/entity"
@@ -121,7 +122,6 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	// TODO: check different errors types to switch between http responses
 	err = h.ProductService.Delete(id)
 
 	if err != nil {
@@ -130,4 +130,37 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, req *http.Request)
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *ProductHandler) ListProducts(w http.ResponseWriter, req *http.Request) {
+	page := req.URL.Query().Get("page")
+	limit := req.URL.Query().Get("limit")
+
+	pageInt, err := strconv.Atoi(page)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	sort := req.URL.Query().Get("sort")
+
+	products, err := h.ProductService.List(pageInt, limitInt, sort)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(products)
 }
