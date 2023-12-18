@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/dto"
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/entity"
@@ -53,7 +52,7 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, req *http.Request)
 func (h *ProductHandler) GetProduct(w http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
 
-	if strings.EqualFold(id, "") {
+	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -72,7 +71,7 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, req *http.Request) {
 func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
 
-	if strings.EqualFold(id, "") {
+	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -110,7 +109,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, req *http.Request)
 func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
 
-	if strings.EqualFold(id, "") {
+	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
