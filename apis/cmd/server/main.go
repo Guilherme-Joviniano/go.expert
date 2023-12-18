@@ -9,7 +9,6 @@ import (
 	database "github.com/Guilherme-Joviniano/go.expert/apis/internal/infra/database/sqlite"
 	"github.com/Guilherme-Joviniano/go.expert/apis/internal/infra/webserver/handlers"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -40,13 +39,14 @@ func main() {
 
 	router := chi.NewRouter()
 
-	router.Use(middleware.Logger)
+	// router.Use(middleware.Logger)
+	router.Use(LoggerRequest)
 
 	router.Route("/products",
 		func(router chi.Router) {
-			router.Use(jwtauth.Verifier(configs.TokenAuth)) 
+			router.Use(jwtauth.Verifier(configs.TokenAuth))
 			router.Use(jwtauth.Authenticator)
-			 
+
 			router.Post("/", productHandler.CreateProduct)
 			router.Get("/", productHandler.ListProducts)
 			router.Get("/{id}", productHandler.GetProduct)
@@ -61,4 +61,11 @@ func main() {
 		})
 
 	http.ListenAndServe(":8000", router)
+}
+
+func LoggerRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Request: %s %f", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
 }
