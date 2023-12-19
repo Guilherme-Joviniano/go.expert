@@ -18,6 +18,7 @@ use (
 	./http-file-server
 	./http-server
 	./http-server-mux
+	./multithreading/challenge
 	./packging/1
 	./packging/2
 	./template
