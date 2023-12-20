@@ -75,6 +75,22 @@ func (s *EventDispatcherTypeSuite) TestEventDispatcher_RegisterWithSameHandlerEv
 	s.Equal(1, len(s.eventDispatcher.handlers[s.event.GetName()]))
 }
 
+func (s *EventDispatcherTypeSuite) TestEventDispatcher_Clear() {
+	s.eventDispatcher.Register(s.event.GetName(), &s.handler)
+	s.Equal(1, len(s.eventDispatcher.handlers[s.event.GetName()]))
+
+	err := s.eventDispatcher.Clear()
+	assert.Nil(s.T(), err)
+
+	s.Equal(0, len(s.eventDispatcher.handlers))
+}
+func (s *EventDispatcherTypeSuite) TestEventDispatcher_ClearWithEmptyMap() {
+	s.Equal(0, len(s.eventDispatcher.handlers))
+
+	err := s.eventDispatcher.Clear()
+	assert.Equal(s.T(), err, ErrEmptyListOfEventsToClean)
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(EventDispatcherTypeSuite))
 }

@@ -3,7 +3,8 @@ package events
 import "errors"
 
 var (
-	ErrEventAlreadyRegistered = errors.New("handler already registered to this event")
+	ErrEventAlreadyRegistered   = errors.New("handler already registered to this event")
+	ErrEmptyListOfEventsToClean = errors.New("the list of events registered is empty")
 )
 
 type EventDispatcher struct {
@@ -26,6 +27,16 @@ func (evd *EventDispatcher) Register(name string, handler IEventHandler) error {
 	}
 
 	evd.handlers[name] = append(evd.handlers[name], handler)
-	
+
+	return nil
+}
+
+func (evd *EventDispatcher) Clear() error {
+	if len(evd.handlers) == 0 {
+		return ErrEmptyListOfEventsToClean
+	}
+
+	evd.handlers = make(map[string][]IEventHandler)
+
 	return nil
 }
