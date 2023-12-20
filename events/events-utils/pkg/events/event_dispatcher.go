@@ -1,6 +1,9 @@
 package events
 
-import "errors"
+import (
+	"errors"
+	"slices"
+)
 
 var (
 	ErrEventAlreadyRegistered   = errors.New("handler already registered to this event")
@@ -39,4 +42,14 @@ func (evd *EventDispatcher) Clear() error {
 	evd.handlers = make(map[string][]IEventHandler)
 
 	return nil
+}
+
+func (evd *EventDispatcher) Has(eventName string, handler IEventHandler) bool {
+	handlers := evd.handlers[eventName]
+
+	if handlers == nil {
+		return false
+	}
+
+	return slices.Contains(handlers, handler)
 }

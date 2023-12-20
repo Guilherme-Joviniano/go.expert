@@ -91,6 +91,17 @@ func (s *EventDispatcherTypeSuite) TestEventDispatcher_ClearWithEmptyMap() {
 	assert.Equal(s.T(), err, ErrEmptyListOfEventsToClean)
 }
 
+func (s *EventDispatcherTypeSuite) TestEventDispatcher_HasExpectedTrueResult() {
+	s.eventDispatcher.Register(s.event2.GetName(), &s.handler2)
+	result := s.eventDispatcher.Has(s.event2.GetName(), &s.handler2)
+	assert.True(s.T(), result)
+}
+
+func (s *EventDispatcherTypeSuite) TestEventDispatcher_HasExpectedFalseResult() {
+	result := s.eventDispatcher.Has(s.event2.GetName(), &s.handler2)
+	assert.False(s.T(), result)
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(EventDispatcherTypeSuite))
 }
