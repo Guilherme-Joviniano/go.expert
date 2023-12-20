@@ -1,19 +1,22 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/Guilherme-Joviniano/multithreading-challenge/internal/entity"
 	infra_http "github.com/Guilherme-Joviniano/multithreading-challenge/internal/infra/http"
 	"github.com/Guilherme-Joviniano/multithreading-challenge/pkg/dto"
+	"github.com/go-chi/chi/v5"
 )
 
 func GetZipCodeHandler(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	zipCode := r.URL.Query().Get("zipCode")
+	zipCode := chi.URLParam(r, "zipCode")
 
 	if zipCode == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -30,7 +33,7 @@ func GetZipCodeHandler(
 			return
 		}
 
-		viaCepResultChannel <- dto.NewZipCodeDetails(result.Localidade)
+		viaCepResultChannel <- dto.NewZipCodeDetails(result.Logradouro, result.Cep, result.Localidade, result.Bairro, result.Uf)
 	}()
 
 	go func() {
@@ -40,20 +43,35 @@ func GetZipCodeHandler(
 			return
 		}
 
-		viaBrasilAPICepResultChannel <- dto.NewZipCodeDetails(result.Street)
+		viaBrasilAPICepResultChannel <- dto.NewZipCodeDetails(result.Cep, result.City, result.Neighborhood, result.Street, result.State)
 	}()
 
 	select {
 	case value := <-viaBrasilAPICepResultChannel:
-		println(value.Address)
-		w.Write([]byte("From Brasil API"))
+
+		response, err := json.Marshal(&value)
+
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(response)
 		return
 	case value := <-viaCepResultChannel:
-		println(value.Address)
-		w.Write([]byte("From ViaCep API"))
+		response, err := json.Marshal(&value)
+
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(response)
 		return
-	case <-time.After(time.Second * 100):
-		println("timeout")
+	case <-time.After(time.Second * 1):
+		fmt.Print("Timeout Reached")
 		w.WriteHeader(http.StatusRequestTimeout)
 		return
 	}
