@@ -1,10 +1,12 @@
 package events
 
 import (
+	"errors"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -30,7 +32,16 @@ func (e *TestEvent) GetDateTime() time.Time {
 type TestEventHandler struct{}
 
 func (t *TestEventHandler) Handle(event IEvent) error {
-	return nil
+	return errors.New("test")
+}
+
+type MockHandler struct {
+	mock.Mock
+}
+
+func (m *MockHandler) Handle(event IEvent) error {
+	m.Called(event)
+	return errors.New("test")
 }
 
 // Mock Dependencies //
@@ -100,6 +111,14 @@ func (s *EventDispatcherTypeSuite) TestEventDispatcher_HasExpectedTrueResult() {
 func (s *EventDispatcherTypeSuite) TestEventDispatcher_HasExpectedFalseResult() {
 	result := s.eventDispatcher.Has(s.event2.GetName(), &s.handler2)
 	assert.False(s.T(), result)
+}
+
+func (s *EventDispatcherTypeSuite) TestEventDispatcher_Dispatch() {
+		s.eventDispatcher.Register(s.event2.GetName(), &s.handler2)
+
+	err := s.eventDispatcher.Dispatch(&s.event2)
+
+	s.Nil(err)
 }
 
 func TestSuite(t *testing.T) {

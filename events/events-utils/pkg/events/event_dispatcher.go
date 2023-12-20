@@ -3,11 +3,14 @@ package events
 import (
 	"errors"
 	"slices"
+	"sync"
 )
 
 var (
 	ErrEventAlreadyRegistered   = errors.New("handler already registered to this event")
 	ErrEmptyListOfEventsToClean = errors.New("the list of events registered is empty")
+	ErrNotRegisteredEvent       = errors.New("the event dispatcher was not register")
+	ErrNoneHandlersToEvent      = errors.New("the event dispatcher has not handlers associated")
 )
 
 type EventDispatcher struct {
@@ -52,4 +55,34 @@ func (evd *EventDispatcher) Has(eventName string, handler IEventHandler) bool {
 	}
 
 	return slices.Contains(handlers, handler)
+}
+
+func (evd *EventDispatcher) Dispatch(event IEvent) error {
+	eventHandlers := evd.handlers[event.GetName()]
+
+	if eventHandlers == nil {
+		return ErrNotRegisteredEvent
+
+	}
+
+	if len(eventHandlers) == 0 {
+		return ErrNoneHandlersToEvent
+	}
+
+	wg := sync.WaitGroup{}
+
+	wg.Add(len(eventHandlers))
+
+	for _, handler := range eventHandlers {
+
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			handler.Handle(event)
+		}(&wg)
+
+	}
+
+	go func() { wg.Wait() }()
+
+	return nil
 }
