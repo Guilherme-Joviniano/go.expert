@@ -1,9 +1,16 @@
 package queues
 
 import (
+	"context"
+	"errors"
 	"log"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+)
+
+var (
+	ErrTimeoutPublishMessage = errors.New("timeout reached to the publish message")
 )
 
 type RabbitMQ struct{}
@@ -53,4 +60,27 @@ func (r *RabbitMQ) Consume(channel *amqp.Channel, configs *ConsumerConfigs) <-ch
 	}
 
 	return messages
+}
+
+func (r *RabbitMQ) PublishWithContextTimeout(
+	ctx context.Context,
+	channel *amqp.Channel,
+	timeout int,
+	exchange, key string,
+	mandatory bool,
+	imediate bool,
+	message *amqp.Publishing,
+) error {
+	context, cancel := context.WithTimeout(ctx, time.Millisecond*time.Duration(timeout))
+
+	err := channel.PublishWithContext(context, exchange, key, mandatory, imediate, *message)
+
+	defer cancel()
+
+	select {
+	case <-context.Done():
+		return ErrTimeoutPublishMessage
+	default:
+		return err
+	}
 }
