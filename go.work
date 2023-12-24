@@ -9,6 +9,7 @@ use (
 	./contexts/extra
 	./databases/gorm
 	./databases/introduction
+	./events/events-utils
 	./first-steps/compile
 	./first-steps/packages
 	./http-client/1
