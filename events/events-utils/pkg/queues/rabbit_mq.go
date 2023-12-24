@@ -6,6 +6,8 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+type RabbitMQ struct{}
+
 type ConsumerConfigs struct {
 	Queue        string
 	ConsumerName string
@@ -16,7 +18,7 @@ type ConsumerConfigs struct {
 	Arguments    amqp.Table
 }
 
-func OpenChannel(connectionString string) (*amqp.Channel, error) {
+func (r *RabbitMQ) OpenChannel(connectionString string) (*amqp.Channel, error) {
 	connection, err := amqp.Dial(connectionString)
 
 	if err != nil {
@@ -34,7 +36,7 @@ func OpenChannel(connectionString string) (*amqp.Channel, error) {
 	return channel, nil
 }
 
-func Consume(channel *amqp.Channel, configs *ConsumerConfigs) (<-chan amqp.Delivery, error) {
+func (r *RabbitMQ) Consume(channel *amqp.Channel, configs *ConsumerConfigs) <-chan amqp.Delivery {
 	messages, err := channel.Consume(
 		configs.Queue,
 		configs.ConsumerName,
@@ -47,8 +49,8 @@ func Consume(channel *amqp.Channel, configs *ConsumerConfigs) (<-chan amqp.Deliv
 
 	if err != nil {
 		log.Fatalf("Consumer [%s] fails to start, error: %s", configs.ConsumerName, err.Error())
-		return nil, err
+		panic(err)
 	}
 
-	return messages, nil
+	return messages
 }
