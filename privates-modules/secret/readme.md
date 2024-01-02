@@ -1,0 +1,1 @@
+This package needs to be into a private repository. By that nobody can pull it as a dependency 
