@@ -65,7 +65,7 @@ func (r *RabbitMQ) Consume(channel *amqp.Channel, configs *ConsumerConfigs) <-ch
 func (r *RabbitMQ) PublishWithContextTimeout(
 	ctx context.Context,
 	channel *amqp.Channel,
-	timeout int,
+	timeout uint32,
 	exchange, key string,
 	mandatory bool,
 	imediate bool,
@@ -73,14 +73,19 @@ func (r *RabbitMQ) PublishWithContextTimeout(
 ) error {
 	context, cancel := context.WithTimeout(ctx, time.Millisecond*time.Duration(timeout))
 
-	err := channel.PublishWithContext(context, exchange, key, mandatory, imediate, *message)
+	errChan := make(chan error)
+
+	go func() {
+		err := channel.PublishWithContext(context, exchange, key, mandatory, imediate, *message)
+		errChan <- err
+	}()
 
 	defer cancel()
 
 	select {
 	case <-context.Done():
 		return ErrTimeoutPublishMessage
-	default:
+	case err := <-errChan:
 		return err
 	}
 }
